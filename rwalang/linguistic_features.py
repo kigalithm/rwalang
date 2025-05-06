@@ -1,6 +1,19 @@
 import re
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
+from .config import (
+    EN_LOAN_WORDS,
+    FR_LOAN_WORDS,
+    SW_LOAN_WORDS,
+    KINYA_MARKERS,
+    KINYA_AFFIX_SUFFIXES,
+    KINYA_AFFIX_PREFIXES,
+    IBIHEKANE,
+    IBYUNGO,
+    INGOMBAJWI,
+    DISTINCTIVE_IBIHEKANE,
+    COMMON_KINYA_PATTERNS,
+)
 
 
 class KinyaLinguisticFeatures(BaseEstimator, TransformerMixin):
@@ -17,321 +30,34 @@ class KinyaLinguisticFeatures(BaseEstimator, TransformerMixin):
         # Initialize Kinyarwanda-specific linguistic components and data
 
         self.loan_words = {
-            "english": [
-                "computer",
-                "internet",
-                "testing",
-                "software",
-                "ok",
-                "email",
-                "phone",
-                "message",
-                "app",
-                "facebook",
-                "whatsapp",
-                "online",
-                "download",
-                "video",
-                "tv",
-                "radio",
-                "bank",
-                "office",
-                "car",
-                "bus",
-                "school",
-                "university",
-                "laptop",
-                "charging",
-                "class",
-                "team",
-                "group",
-                "project",
-                # Add common English verbs used in code-mixing (base forms)
-                "test",
-                "download",
-                "charge",
-                "start",
-                "stop",
-                "check",
-                "send",
-                "receive",
-                "share",
-                "like",
-                "comment",
-                "post",
-                "update",
-                "join",
-                "create",
-            ],
-            "french": [
-                "bonjour",
-                "merci",
-                "école",
-                "bureau",
-                "centre",
-                "université",
-                "document",
-                "voiture",
-                "téléphone",
-                "restaurant",
-                "hôtel",
-                "café",
-                "police",
-                "journal",
-                "politique",
-                "économie",
-                "télévision",
-                "hôpital",
-                "docteur",
-                "infirmière",
-            ],
-            "swahili": [
-                "habari",
-                "asante",
-                "karibu",
-                "tafadhali",
-                "nzuri",
-                "ndio",
-                "hapana",
-                "sawa",
-                "sana",
-                "pole",
-                "chakula",
-                "maji",
-                "rafiki",
-                "safari",
-                "jambo",
-                "kwaheri",
-                "mkubwa",
-                "mdogo",
-                "mzee",
-                "bwana",
-            ],
+            "english":EN_LOAN_WORDS,
+            "french": FR_LOAN_WORDS,
+            "swahili": SW_LOAN_WORDS,
         }
 
-        self.kiny_markers = [
-            "ndi",
-            "uri",
-            "ari",
-            "turi",
-            "muri",
-            "bari",  # to be forms
-            "nda",
-            "ura",
-            "ara",
-            "tura",
-            "mura",
-            "bara",  # present continuous markers
-            "na",
-            "wa",
-            "ya",
-            "cya",
-            "bya",
-            "rya",
-            "ka",  # possessive markers
-            "mu",
-            "ku",
-            "i",
-            "muri",
-            "kuri",  # locative prepositions
-            "nta",
-            "ese",
-            "ni",
-            "si",  # common particles
-            "ubu",
-            "ejo",
-            "kare",
-            "vuba",  # time markers
-            "na",
-            "kandi",
-            "ariko",
-            "cyangwa",  # conjunctions
-            "ngo",
-            "ko",
-            "kuko",
-            "kugira",  # complementizers
-            "ba",
-            "ma",
-            "ki",
-            "bi",
-            "ru",
-            "ka",
-            "bu",  # noun class prefixes (some overlap with subject)
-            "n",
-            "u",
-            "a",
-            "tu",
-            "mu",
-            "ba",  # subject prefixes
-        ]
+        self.kiny_markers = KINYA_MARKERS
 
         self.kiny_affixes = {
-            "prefixes": [
-                "ku",
-                "gu",
-                "ba",
-                "aba",
-                "umu",
-                "imi",
-                "iki",
-                "ibi",
-                "in",
-                "ama",
-                "uru",
-                "aka",
-                "ubu",
-                "ukw",
-                "aha",
-                "utw",
-            ],  # Expanded list
-            "suffixes": [
-                "nga",
-                "mo",
-                "ho",
-                "yo",
-                "ko",
-                "ga",
-                "ye",
-                "yeho",
-                "yemo",
-                "yeyo",
-                "etse",
-            ],  # Expanded list
+            "prefixes": KINYA_AFFIX_SUFFIXES,  # Expanded list
+            "suffixes": KINYA_AFFIX_PREFIXES,  # Expanded list
         }
-        # --- End Moved Linguistic Data ---
 
         # Initialize Kinyarwanda-specific linguistic components
-        self.ibihekane = [
-            "bw",
-            "bg",
-            "by",
-            "byw",
-            "mb",
-            "mbw",
-            "mby",
-            "mbyw",
-            "cw",
-            "cy",
-            "nc",
-            "ncw",
-            "ncy",
-            "dw",
-            "nd",
-            "ndw",
-            "ndy",
-            "fw",
-            "mf",
-            "mfw",
-            "gw",
-            "ng",
-            "ngw",
-            "hw",
-            "jw",
-            "jy",
-            "nj",
-            "njw",
-            "njy",
-            "kw",
-            "nk",
-            "nkw",
-            "mw",
-            "my",
-            "myw",
-            "nw",
-            "ny",
-            "nyw",
-            "nny",
-            "pw",
-            "py",
-            "mp",
-            "mpw",
-            "mpy",
-            "pf",
-            "pfw",
-            "pfy",
-            "rw",
-            "ry",
-            "sw",
-            "sy",
-            "ns",
-            "nsw",
-            "nsy",
-            "sh",
-            "shw",
-            "shy",
-            "shyw",
-            "nsh",
-            "nshw",
-            "nshy",
-            "nshyw",
-            "tw",
-            "ty",
-            "nt",
-            "ntw",
-            "nty",
-            "ts",
-            "tsw",
-            "vw",
-            "vy",
-            "mv",
-            "mvw",
-            "mvy",
-            "zw",
-            "nz",
-            "nzw",
-            "mvy",
-        ]
+        self.ibihekane = IBIHEKANE
 
-        self.ibyungo = ["na", "nka", "n'", "nk'"]
+        self.ibyungo = IBYUNGO
 
         self.inyajwi = ["a", "e", "i", "o", "u", "â", "ê", "î", "ô", "û"]
         self.accented_vowels = ["â", "ê", "î", "ô", "û"]
         self.regular_vowels = ["a", "e", "i", "o", "u"]
 
-        self.ingombajwi = [
-            "b",
-            "c",
-            "d",
-            "f",
-            "g",
-            "h",
-            "j",
-            "k",
-            "l",
-            "m",
-            "n",
-            "p",
-            "r",
-            "s",
-            "t",
-            "v",
-            "w",
-            "y",
-            "z",
-        ]
+        self.ingombajwi = INGOMBAJWI
 
         self.indomo = ["u", "a", "i"]  # Labial vowels related to harmony
 
         # Compile regex patterns for efficient matching
         self.ibihekane_pattern = self._compile_regex_pattern(self.ibihekane)
-        self.distinctive_ibihekane_list = [
-            "nny",
-            "mpw",
-            "nshw",
-            "shyw",
-            "mbyw",
-            "nshy",
-            "nshyw",
-            "ndy",
-            "mvw",
-            "mvy",
-            "njw",
-            "njy",
-            "myw",
-            "nzw",
-            "ncw",
-            "ncy",
-        ]
+        self.distinctive_ibihekane_list = DISTINCTIVE_IBIHEKANE
 
         self.distinctive_ibihekane_pattern = self._compile_regex_pattern(
             self.distinctive_ibihekane_list
@@ -491,81 +217,10 @@ class KinyaLinguisticFeatures(BaseEstimator, TransformerMixin):
     def _has_kiny_patterns(self, word):
         """Check if a word contains characteristic Kinyarwanda patterns (moved)"""
         # Distinctive Kinyarwanda character patterns (expanded for better coverage)
-        kiny_patterns = [
-            "rwa",
-            "nya",
-            "ndi",
-            "mbe",
-            "cy",
-            "by",
-            "ry",
-            "tw",
-            "mw",
-            "nda",
-            "sha",
-            "ngu",
-            "nde",
-            "mur",
-            "uba",
-            "iby",
-            "icy",
-            "uku",
-            "uri",
-            "ara",
-            "ese",
-            "ama",
-            "ubu",
-            "nge",
-            "byo",
-            "cyo",
-            "ryo",
-            "kwa",
-            "nta",
-            "ira",
-            "mbw",
-            "mby",
-            "mbyw",
-            "ncy",
-            "ndw",
-            "ndy",
-            "mfw",
-            "ngw",
-            "njw",
-            "njy",
-            "nkw",
-            "myw",
-            "nyw",
-            "nny",
-            "mpw",
-            "mpy",
-            "pfw",
-            "pfy",
-            "nsw",
-            "nsy",
-            "shw",
-            "shy",
-            "shyw",
-            "nsh",
-            "nshw",
-            "nshy",
-            "nshyw",
-            "ntw",
-            "nty",
-            "tsw",
-            "mvw",
-            "mvy",
-            "nzw",
-            "kug",
-            "guk",
-            "kw",
-            "mw",
-            "rw",
-            "by",
-            "cy",  # Added common structures
-        ]
+        kiny_patterns = COMMON_KINYA_PATTERNS
 
         # Use a compiled regex pattern for efficiency if needed, but for a single word,
-        # a simple loop is fine. Let's keep it simple as originally written.
+        # a simple loop is fine for now.
         return any(pattern in word.lower() for pattern in kiny_patterns)
 
     def _analyze_grammar_structure(self, words):
@@ -859,10 +514,7 @@ class KinyaLinguisticFeatures(BaseEstimator, TransformerMixin):
         return (
             has_kiny_markers and has_foreign_words
         )  # Return True if both general types are present
-
-    # --- End Moved Linguistic Analysis Methods ---
-
-    # --- Existing Linguistic Rule Checks (within KinyarwandaLinguisticFeatures) ---
+    
 
     def _check_consecutive_consonants(self, text):
         """
