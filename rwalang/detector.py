@@ -1,6 +1,7 @@
 import re
 import random
 import numpy as np
+import pandas as pd
 import joblib
 import warnings
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
@@ -9,8 +10,8 @@ from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline, FeatureUnion
-from .linguistic_features import KinyaLinguisticFeatures
-from .config import (
+from linguistic_features import KinyaLinguisticFeatures
+from config import (
     logging,
     MIXED_TEXT_THRESHOLD,
     DEFAULT_NGRAM_RANGE,
@@ -917,9 +918,22 @@ def main():
         ],
     }
 
+
+
+    kinya_data = training_data['kinyarwanda']
+    print(f"Kinyarwanda: {len(kinya_data)}")
+
+    for label, texts in training_data.items():
+        # For each text in the list for this language
+        for text in texts:
+        # Add a dictionary for this sample to our list
+            # data_for_df.append({'text': text, 'label': label})
+            print(f"text: {text} | label: {label}")
+
+
     # Create and train the enhanced detector
-    detector = EnhancedKinyaLangDetector()
-    detector.train(training_data)
+    # detector = EnhancedKinyaLangDetector()
+    # detector.train(training_data)
 
     # Check if a trained model exists and load it, otherwise train
     # model_filepath = "kinya_detector.joblib"
@@ -931,38 +945,38 @@ def main():
     #     detector.save_model(model_filepath)
 
     # Example usage in a chatbot
-    def chatbot_response(user_input):
-        result = detector.detect(user_input)
+    # def chatbot_response(user_input):
+    #     result = detector.detect(user_input)
 
-        response = f"Input: '{user_input}'\n"
-        response += f"Detection Result: {result}\n"
+    #     response = f"Input: '{user_input}'\n"
+    #     response += f"Detection Result: {result}\n"
 
-        if result["is_kinyarwanda"]:
-            confidence_percent = int(result["confidence"] * 100)
-            response += (
-                f"Chatbot interpretation: I detected Kinyarwanda (confidence: {confidence_percent}%). "
-                f"I'm still learning Kinyarwanda, but I'll try my best to understand. "
-                f"Would you like to continue in English for now?"
-            )
-        elif result["code_mixed"]:
-            confidence_percent = int(result["confidence"] * 100)
-            response += (
-                f"Chatbot interpretation: I detected code-mixed text (confidence: {confidence_percent}%, predicted primary: {result['language']}). "
-                f"It seems to contain Kinyarwanda mixed with other languages. "
-                f"How can I help with this?"
-            )
-        else:
-            # Process the message normally in the detected language
-            if result["language"] == "english":
-                response += "Chatbot interpretation: I understood your message in English. How can I help you today?"
-            elif result["language"] == "french":
-                response += "Chatbot interpretation: J'ai compris votre message en français. Comment puis-je vous aider aujourd'hui?"
-            elif result["language"] == "swahili":
-                response += "Chatbot interpretation: Nimeelewa ujumbe wako kwa Kiswahili. Nawezaje kukusaidia leo?"
-            else:
-                response += f"Chatbot interpretation: I detected the language as '{result['language']}' (confidence: {int(result['confidence']*100)}%). How can I help?"
+    #     if result["is_kinyarwanda"]:
+    #         confidence_percent = int(result["confidence"] * 100)
+    #         response += (
+    #             f"Chatbot interpretation: I detected Kinyarwanda (confidence: {confidence_percent}%). "
+    #             f"I'm still learning Kinyarwanda, but I'll try my best to understand. "
+    #             f"Would you like to continue in English for now?"
+    #         )
+    #     elif result["code_mixed"]:
+    #         confidence_percent = int(result["confidence"] * 100)
+    #         response += (
+    #             f"Chatbot interpretation: I detected code-mixed text (confidence: {confidence_percent}%, predicted primary: {result['language']}). "
+    #             f"It seems to contain Kinyarwanda mixed with other languages. "
+    #             f"How can I help with this?"
+    #         )
+    #     else:
+    #         # Process the message normally in the detected language
+    #         if result["language"] == "english":
+    #             response += "Chatbot interpretation: I understood your message in English. How can I help you today?"
+    #         elif result["language"] == "french":
+    #             response += "Chatbot interpretation: J'ai compris votre message en français. Comment puis-je vous aider aujourd'hui?"
+    #         elif result["language"] == "swahili":
+    #             response += "Chatbot interpretation: Nimeelewa ujumbe wako kwa Kiswahili. Nawezaje kukusaidia leo?"
+    #         else:
+    #             response += f"Chatbot interpretation: I detected the language as '{result['language']}' (confidence: {int(result['confidence']*100)}%). How can I help?"
 
-        return response
+    #     return response
 
     # Test some examples
     test_phrases = [
@@ -997,9 +1011,10 @@ def main():
         "Ese ubu uri gukora project?",  # Mixed Kinyarwanda + English
     ]
 
-    for phrase in test_phrases:
-        logging.info("-" * 30)
-        logging.info(chatbot_response(phrase))
+
+    # for phrase in test_phrases:
+    #     logging.info("-" * 30)
+    #     logging.info(chatbot_response(phrase))
 
 
 if __name__ == "__main__":
