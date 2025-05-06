@@ -402,3 +402,7 @@ COMMON_KINYA_PATTERNS = [
     "by",
     "cy",  # Added common structures
 ]
+
+
+# Data
+DEFAULT_OUTPUT_CSV_PATH = "../data/raw/training_data.csv"

@@ -921,14 +921,17 @@ def main():
 
 
     kinya_data = training_data['kinyarwanda']
-    print(f"Kinyarwanda: {len(kinya_data)}")
+    
+    from utils import save_training_data_to_csv
 
-    for label, texts in training_data.items():
-        # For each text in the list for this language
-        for text in texts:
-        # Add a dictionary for this sample to our list
-            # data_for_df.append({'text': text, 'label': label})
-            print(f"text: {text} | label: {label}")
+    df = save_training_data_to_csv(training_data)
+
+    if df is not None:
+        print("\nFirst 5 rows of the created DataFrame:")
+        print(df.head())
+
+        print(f"\nValue counts for labels:")
+        print(df.head(5))
 
 
     # Create and train the enhanced detector
