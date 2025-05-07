@@ -26,7 +26,7 @@ from config import (
 warnings.filterwarnings("ignore")
 
 
-class EnhancedKinyaLangDetector:
+class KinyaLangDetector:
     """
     An enhanced language detector for Kinyarwanda that combines character n-grams,
     TF-IDF vectorization, and Kinyarwanda-specific linguistic features to identify
@@ -751,10 +751,10 @@ def main():
     training_data_dict = training_df.groupby('language')['text'].apply(list).to_dict()
 
     # Create and train the enhanced detector
-    detector = EnhancedKinyaLangDetector()
+    detector = KinyaLangDetector()
 
     # Check if a trained model exists and load it, otherwise train
-    model_filepath = "models/kinya_detector.joblib"
+    model_filepath = TRAINED_MODEL_PATH
     try:
         detector.load_model(model_filepath)
     except FileNotFoundError:
