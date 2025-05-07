@@ -94,7 +94,9 @@ class EnhancedKinyaLangDetector:
         y_filtered = [y_augmented[i] for i in valid_indices]
 
         if len(X_filtered) < 2 or len(set(y_filtered)) < 2:
-            logging.info("Not enough data or languages after filtering for train/test split.")
+            logging.info(
+                "Not enough data or languages after filtering for train/test split."
+            )
             # Potentially train on all data if validation split isn't feasible
             X_train, y_train = X_filtered, y_filtered
             X_val, y_val = [], []  # No separate validation set
@@ -108,7 +110,9 @@ class EnhancedKinyaLangDetector:
                     stratify=y_filtered,
                 )
             except ValueError as e:
-                logging.info(f"Could not stratify split. Falling back to simple split: {e}")
+                logging.info(
+                    f"Could not stratify split. Falling back to simple split: {e}"
+                )
                 X_train, X_val, y_train, y_val = train_test_split(
                     X_filtered, y_filtered, test_size=0.2, random_state=42
                 )
@@ -192,7 +196,9 @@ class EnhancedKinyaLangDetector:
 
         # Simplify grid search significantly if dataset is large
         if len(X_train) > 500:  # Adjusted threshold
-            logging.info("Large dataset detected. Using simplified parameter optimization.")
+            logging.info(
+                "Large dataset detected. Using simplified parameter optimization."
+            )
             param_grid = {
                 "classifier__nb__alpha": [
                     0.01,
@@ -776,6 +782,124 @@ def main():
             "Umurima wacu urera neza.",
             "Nzava mu modoka vuba cyane.",
             "Ndasoma igitabo cyiza cyanditswe n'umwanditsi w'umunyarwanda.",
+            "Bukeye abona agasozi kari gateganye n’urugo rw’Umwami",
+            "kakabuza abantu kureba ibituruka kure",
+            "Semuhanuka araza abwira Umwami ati.",
+            "urampe inka y’ingumba maze nzagukurireho kariya gasozi",
+            "nyoroshya mpa ibyo umpa maze uzirorere",
+            "Semuhanuka aza yakenyeye bya gasurantambara",
+            "yitwaje ikibando, yikoreye ingata nini ifashe ku mutwe wose",
+            "araza n’i bwami ahasanga abantu benshi",
+            "mbwirira aba bantu bamperekeze hariya hari icyo njya kubabwira",
+            "Semuhanuka amaguru aba ariyo abangira ingata asubira ibwami",
+            "Ababiri bagiye inama baruta umunani barasana",
+            "Ababiri bakika umwe",
+            "Ababiri bateranya abeza",
+            "Ababiri bica umwe",
+            "Ababiri ntibacibwa inka",
+            "Abacuranye ubusa basangira ubundi",
+            "Abadapfuye ntibabura kubonana",
+            "Abagabo babiri ntibabana mu nzu imwe.",
+            "Abagabo bararya imbwa zikishyura (zikaryora).",
+            "Abagira amenyo baraseka.",
+            "Abagira inyonjo bagira ibirori.",
+            "Abagira iyo bajya baragenda.",
+            "Ab’imbwa bifuza ko budacya.",
+            "Aboro babiri ntibasangira umwerera.",
+            "Abonye isha itamba ata n’urwo yari yambaye.",
+            "Abotanye kera ntibahishanya amabya.",
+            "Abo umwami yahaye amata ni bo bamwimye amatwi.",
+            "Abwirwa benshi akumva bene yo.",
+            "Acuritse inkanda ntacuritse umutima.",
+            "Agaca amakungu ni ukwima uwarugendagamo.",
+            "Agacumu gahabwa agahari, naho agahararutswe gahabwa agahini.",
+            "Agahanga k’umugabo gahangurwa n’uwakaremye.",
+            "Agahararo ntikabuza agahararuko.",
+            "Agahinda gashira bake.",
+            "Agahinda k’inkoko kamenya inkike yatoyemo.",
+            "Agahinda k’inkono kamenywa n’uwayiharuye.",
+            "Agahinda ntigashira; gashira nyirako yapfuye.",
+            "Agahinda ntikajya ahabona.",
+            "Agahinda ntikica kagira mubi.",
+            "Agahinda ni ukubura uwo ukunda.",
+            "Babajije inyamanza bati: ko ufite ukuguru gutoya?",
+            "Iti: na ko nagukesheje Rusengo, Semugeshi arenda kukubazamo ubwato!",
+            "Babonye umwezi bagira ngo bwakeye",
+            "Bagabobarabona yahamagaye urupfu ngo nirugaruke rumurarire",
+            "Bagabobarabona yambutse uruzi uruhu rwe rugwamo, ati: ruramaze rwari rurariwe kumeswa",
+            "Bagarira yose ntuzi irizera n'irizarumba",
+            "Bagaragaza ba Bagaragaza ati; aho abato bari bararyimara",
+            "Bakubise nyir'uruhara, nyir'imvi ati: bene ubusembwa batashye",
+            "Bakunda inkwi bakanga umushenyi",
+            "Bamenya icyo yishe ntibamenya icyo ikijije",
+            "Banegura ibyigondoye umuhoro ukarakara",
+            "Biza byirabura, bikaza byera, bigaturwa umwami",
+            "Bucya zihindura imirishyo",
+            "Bucyana ayandi",
+            "Gahebeheba ka Ntibaheba, ati: Urwanda rwanyanze ngahata!",
+            "Gahima yanywanye na Kajogora, ati: intege nke zitera imico myiza",
+            "Gesa ubw'iyo ubw'ino ntiburera",
+            "Gihuga isubiye ku gihuru",
+            "Gikona burya uzi ko njya ngukeka amababa!",
+            "Gira so yiturwa indi.",
+            "Guha inda ni ukuyirariza",
+            "Guha intanyurwa ni ugusesa",
+            "Guherekeza si ukujyana",
+            "Gukanura amaso si ko gukira",
+            "Gukira kwibagiza gukinga",
+            "Gukunda ikitagukunda ni imvura igwa mu ishyamba",
+            "Haba ubugabo ntihaba ubukuru.",
+            "Haba umugisha ntihaba ubugabo.",
+            "Haba umuhanwa hakaba n’umwihane, hakaba n’uwananiranye",
+            "Haganya nyir’ubukozwemo naho nyir’ubuteruranwe n’akebo, ntakoma",
+            "Hagati y'abapfu n’abapfumu hamenya abahanga",
+            "Hagati yumutwe n’umutwaro haca ingata",
+            "Haguma kwiha",
+            "Haguma umwami ingoma irabazwa",
+            "Hakomera imfubyi ifuni iroroha",
+            "Agakungu kavamo imbwa yiruka.",
+            "Agapfa kabuliwe ni impongo.",
+            "Agapfundikiye gatera amatsiko.",
+            "Agatinze kazaza ni amenyo ya ruguru.",
+            "Ababurana Ari babiri umwe abayigiza nkana",
+            "utazi ubwenge ashima ubwe ",
+            "ikibuno gishuka amabyi bitari bujyane",
+            "Ababiri bishe imbwa y’umwami.",
+            "Ababiri ntibacibwa inka.",
+            "Ababurana ari babiri umwe aba yigiza nkana.",
+            "Abagore bagira inzara ntibagira inzigo.",
+            "Abagore baragwira.",
+            "Abahigi benshi bayobya imbwa (uburari).",
+            "Abakingiranye inyegamo ntibakingirana ingabo.",
+            "Abalinzi bajya inama inyoni zijya iyindi.",
+            "Abantu bibuka imana iyo amakuba yababanye menshi.",
+            "Abasangira bashonje ntawusigariza undi.",
+            "Abasangira basigana imbyiro.",
+            "Abasangira bike bitana ibisambo.",
+            "Abasangira ubusa bitana ibisambo.",
+            "Abasobetse imisumbi ntibaba bagihishanye amabya.",
+            "Abatanye badatata barasubirana.",
+            "Abateranye imigeri ntibahishana amabya.",
+            "Aberekeranye ntibabura kwendana.",
+            "Abotanye kera ntibahishanya amabya",
+            "Abwirwa benshi akumva (akwumvwa na) bene yo.",
+            "Agafuni kabagara ubucuti ni akarenge.",
+            "Agahwa kari k’uwundi karahandurika.",
+            "Agakecuru gahaze gakina n’imyenge y’inzu.",
+            "Agakono gashaje karyoshya ibiryo",
+            "Agakono gashaje niko karyoshya imboga",
+            "Agakungu gakuna imbwa.",
+            "Agakungu iyo gashize agashino kayora ivu.",
+            "Agakungu kavamo imbwa yiruka.",
+            "Agapfa kabuliwe ni impongo.",
+            "Agashyize kera gahinyuza inshuti.",
+            "Agashyize kera gahinyuza intwari.",
+            "Agasozi kagusabye amaraso ntuyakarenza.",
+            "Agasozi kamanutse inka kazamuka indi.",
+            "Agati gateretswe n’Imana ntigahungabanywa n’umuyaga.",
+            "Agatinze kazaryoha ni agatuba k’uruhinja.",
+            "Agatinze kazaza ni amenyo ya ruguru.",
+            "Ahanze ubwana hamera ubwanwa.",
             # Additional phrases covering various contexts
             "Abandi barimo gukora iki muri iki gihe?",
             "Nkora mu ruganda runini rw'iKigali.",
@@ -810,9 +934,7 @@ def main():
             "Abandi baraho?",
             "Baraho nyabuna?",
             # Add some mixed examples to the training data (optional, synthetic)
-            # You could generate these using the _generate_code_mixed_examples logic
-            # from the first class version, perhaps as a separate utility function.
-            # Or manually add them here.
+            "Ngiye gufata aka bike",  # Kinyarwanda + English
             "Ndi online ubu.",  # Kinyarwanda + English
             "Ndashaka ku download application.",  # Kinyarwanda + English
             "Ubu ndimo gukora project.",  # Kinyarwanda + English
@@ -825,13 +947,14 @@ def main():
             "Niba uri okay, tuza.",  # Kinyarwanda + English
             "Nshaka kujya kuri internet.",  # Kinyarwanda + English
             "Bon courage muri school.",  # Kinyarwanda + French/English
-            "Urakoze sana mwami.",  # Kinyarwanda + Swahili/Kinyarwanda (sana is Swahili)
+            "Urakoze sana mwana.",  # Kinyarwanda + Swahili/Kinyarwanda (sana is Swahili)
             "Ntabwo nabonye document.",  # Kinyarwanda + French
-            "Umu bureau muri kigali.",  # Kinyarwanda + French
+            "Bureau yanjye iri muri Kigali.",  # Kinyarwanda + French
             "Twahuye muri centre.",  # Kinyarwanda + French
             "Ibyo ni sawa kabisa.",  # Kinyarwanda + Swahili
             "Habari ko muri mu Rwanda?",  # Swahili + Kinyarwanda
             "Asante cyane.",  # Swahili + Kinyarwanda
+            "Urabona arahagera nka saa ngapi?",
         ],
         "english": [
             "Hello, how are you?",
@@ -918,10 +1041,8 @@ def main():
         ],
     }
 
+    kinya_data = training_data["kinyarwanda"]
 
-
-    kinya_data = training_data['kinyarwanda']
-    
     from utils import save_training_data_to_csv
 
     df = save_training_data_to_csv(training_data)
@@ -932,7 +1053,6 @@ def main():
 
         print(f"\nValue counts for labels:")
         print(df.head(5))
-
 
     # Create and train the enhanced detector
     # detector = EnhancedKinyaLangDetector()
@@ -1013,7 +1133,6 @@ def main():
         "Hakuna matata.",  # Swahili
         "Ese ubu uri gukora project?",  # Mixed Kinyarwanda + English
     ]
-
 
     # for phrase in test_phrases:
     #     logging.info("-" * 30)

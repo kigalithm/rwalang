@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import datetime
 from config import logging, DEFAULT_OUTPUT_CSV_PATH
 
 
@@ -27,14 +28,16 @@ def save_training_data_to_csv(
         )  # Use print for simplicity
         return None
 
+    timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
     # Define default values for metadata columns
     DEFAULT_METADATA_DEFAULTS = {
         "source": "n/a",
         "original_id": "n/a",
-        "timestamp": None,
+        "timestamp": timestamp,
         "is_code_mixed": False,
         "mixed_languages": None,
-        "annotator": "n/a",
+        "annotator": "kigalithm",
         "quality_score": None,
     }
 
@@ -84,123 +87,124 @@ def save_training_data_to_csv(
     return df
 
 
-more_kinya = [
-    "Bukeye abona agasozi kari gateganye n’urugo rw’Umwami",
-    "kakabuza abantu kureba ibituruka kure",
-    "Semuhanuka araza abwira Umwami ati.",
-    "urampe inka y’ingumba maze nzagukurireho kariya gasozi",
-    "nyoroshya mpa ibyo umpa maze uzirorere",
-    "Semuhanuka aza yakenyeye bya gasurantambara",
-    "yitwaje ikibando, yikoreye ingata nini ifashe ku mutwe wose",
-    "araza n’i bwami ahasanga abantu benshi",
-    "mbwirira aba bantu bamperekeze hariya hari icyo njya kubabwira",
-    "Semuhanuka amaguru aba ariyo abangira ingata asubira ibwami",
-    "Ababiri bagiye inama baruta umunani barasana",
-    "Ababiri bakika umwe",
-    "Ababiri bateranya abeza",
-    "Ababiri bica umwe",
-    "Ababiri ntibacibwa inka",
-    "Abacuranye ubusa basangira ubundi",
-    "Abadapfuye ntibabura kubonana",
-    "Abagabo babiri ntibabana mu nzu imwe.",
-    "Abagabo bararya imbwa zikishyura (zikaryora).",
-    "Abagira amenyo baraseka.",
-    "Abagira inyonjo bagira ibirori.",
-    "Abagira iyo bajya baragenda.",
-    "Ab’imbwa bifuza ko budacya.",
-    "Aboro babiri ntibasangira umwerera.",
-    "Abonye isha itamba ata n’urwo yari yambaye.",
-    "Abotanye kera ntibahishanya amabya.",
-    "Abo umwami yahaye amata ni bo bamwimye amatwi.",
-    "Abwirwa benshi akumva bene yo.",
-    "Acuritse inkanda ntacuritse umutima.",
-    "Agaca amakungu ni ukwima uwarugendagamo.",
-    "Agacumu gahabwa agahari, naho agahararutswe gahabwa agahini.",
-    "Agahanga k’umugabo gahangurwa n’uwakaremye.",
-    "Agahararo ntikabuza agahararuko.",
-    "Agahinda gashira bake.",
-    "Agahinda k’inkoko kamenya inkike yatoyemo.",
-    "Agahinda k’inkono kamenywa n’uwayiharuye.",
-    "Agahinda ntigashira; gashira nyirako yapfuye.",
-    "Agahinda ntikajya ahabona.",
-    "Agahinda ntikica kagira mubi.",
-    "Agahinda ni ukubura uwo ukunda.",
-    "Babajije inyamanza bati: ko ufite ukuguru gutoya?",
-    "Iti: na ko nagukesheje Rusengo, Semugeshi arenda kukubazamo ubwato!",
-    "Babonye umwezi bagira ngo bwakeye",
-    "Bagabobarabona yahamagaye urupfu ngo nirugaruke rumurarire",
-    "Bagabobarabona yambutse uruzi uruhu rwe rugwamo, ati: ruramaze rwari rurariwe kumeswa",
-    "Bagarira yose ntuzi irizera n'irizarumba",
-    "Bagaragaza ba Bagaragaza ati; aho abato bari bararyimara",
-    "Bakubise nyir'uruhara, nyir'imvi ati: bene ubusembwa batashye",
-    "Bakunda inkwi bakanga umushenyi",
-    "Bamenya icyo yishe ntibamenya icyo ikijije",
-    "Banegura ibyigondoye umuhoro ukarakara",
-    "Biza byirabura, bikaza byera, bigaturwa umwami",
-    "Bucya zihindura imirishyo",
-    "Bucyana ayandi",
-    "Gahebeheba ka Ntibaheba, ati: Urwanda rwanyanze ngahata!",
-    "Gahima yanywanye na Kajogora, ati: intege nke zitera imico myiza",
-    "Gesa ubw'iyo ubw'ino ntiburera",
-    "Gihuga isubiye ku gihuru",
-    "Gikona burya uzi ko njya ngukeka amababa!",
-    "Gira so yiturwa indi.",
-    "Guha inda ni ukuyirariza",
-    "Guha intanyurwa ni ugusesa",
-    "Guherekeza si ukujyana",
-    "Gukanura amaso si ko gukira",
-    "Gukira kwibagiza gukinga",
-    "Gukunda ikitagukunda ni imvura igwa mu ishyamba",
-    "Haba ubugabo ntihaba ubukuru.",
-    "Haba umugisha ntihaba ubugabo.",
-    "Haba umuhanwa hakaba n’umwihane, hakaba n’uwananiranye",
-    "Haganya nyir’ubukozwemo naho nyir’ubuteruranwe n’akebo, ntakoma",
-    "Hagati y'abapfu n’abapfumu hamenya abahanga",
-    "Hagati yumutwe n’umutwaro haca ingata",
-    "Haguma kwiha",
-    "Haguma umwami ingoma irabazwa",
-    "Hakomera imfubyi ifuni iroroha",
-    "Agakungu kavamo imbwa yiruka.",
-    "Agapfa kabuliwe ni impongo.",
-    "Agapfundikiye gatera amatsiko.",
-    "Agatinze kazaza ni amenyo ya ruguru.",
-    "Ababurana Ari babiri umwe abayigiza nkana",
-    "utazi ubwenge ashima ubwe ",
-    "ikibuno gishuka amabyi bitari bujyane",
-    "Ababiri bishe imbwa y’umwami.",
-    "Ababiri ntibacibwa inka.",
-    "Ababurana ari babiri umwe aba yigiza nkana.",
-    "Abagore bagira inzara ntibagira inzigo.",
-    "Abagore baragwira.",
-    "Abahigi benshi bayobya imbwa (uburari).",
-    "Abakingiranye inyegamo ntibakingirana ingabo.",
-    "Abalinzi bajya inama inyoni zijya iyindi.",
-    "Abantu bibuka imana iyo amakuba yababanye menshi.",
-    "Abasangira bashonje ntawusigariza undi.",
-    "Abasangira basigana imbyiro.",
-    "Abasangira bike bitana ibisambo.",
-    "Abasangira ubusa bitana ibisambo.",
-    "Abasobetse imisumbi ntibaba bagihishanye amabya.",
-    "Abatanye badatata barasubirana.",
-    "Abateranye imigeri ntibahishana amabya.",
-    "Aberekeranye ntibabura kwendana.",
-    "Abotanye kera ntibahishanya amabya",
-    "Abwirwa benshi akumva (akwumvwa na) bene yo.",
-    "Agafuni kabagara ubucuti ni akarenge.",
-    "Agahwa kari k’uwundi karahandurika.",
-    "Agakecuru gahaze gakina n’imyenge y’inzu.",
-    "Agakono gashaje karyoshya ibiryo",
-    "Agakono gashaje niko karyoshya imboga",
-    "Agakungu gakuna imbwa.",
-    "Agakungu iyo gashize agashino kayora ivu.",
-    "Agakungu kavamo imbwa yiruka.",
-    "Agapfa kabuliwe ni impongo.",
-    "Agashyize kera gahinyuza inshuti.",
-    "Agashyize kera gahinyuza intwari.",
-    "Agasozi kagusabye amaraso ntuyakarenza.",
-    "Agasozi kamanutse inka kazamuka indi.",
-    "Agati gateretswe n’Imana ntigahungabanywa n’umuyaga.",
-    "Agatinze kazaryoha ni agatuba k’uruhinja.",
-    "Agatinze kazaza ni amenyo ya ruguru.",
-    "Ahanze ubwana hamera ubwanwa.",
-]
+if __name__ == "__main__":
+
+    eac_df = pd.read_csv("../data/raw/eac.csv", encoding="utf-8")
+    training_df = pd.read_csv("../data/raw/training_data.csv", encoding="utf-8")
+    COMBINED_CSV_PATH = "../data/raw/training_data_spoken_langs_in_rw.csv"
+    timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    EAC_COLUMN_MAPPING = {"Text": "text", "Language": "language"}
+
+    # Define default values for columns that might be missing in the EAC data
+    DEFAULT_METADATA_DEFAULTS = {
+        "source": "eac_dataset",  # Default source for EAC data
+        "original_id": "n/a_eac",  # Default ID prefix for EAC data
+        "timestamp": timestamp,
+        "is_code_mixed": False,
+        "mixed_languages": None,
+        "annotator": "kigalithm",  # Default annotator for EAC data
+        "quality_score": None,
+    }
+
+    # --- Data Loading ---
+
+    rw_eac_df = eac_df[eac_df["Language"] == "Kinyarwanda"]
+    sw_eac_df = eac_df[eac_df["Language"] == "Kiswahili"]
+    fr_eac_df = eac_df[eac_df["Language"] == "French"]
+    en_eac_df = eac_df[eac_df["Language"] == "English"]
+
+    TARGET_COLUMNS = [
+        "text",
+        "language",
+        "source",
+        "original_id",
+        "timestamp",
+        "is_code_mixed",
+        "mixed_languages",
+        "annotator",
+        "quality_score",
+    ]
+
+    sw_eac_df = sw_eac_df.rename(columns=EAC_COLUMN_MAPPING, errors='ignore')
+    rw_eac_df = rw_eac_df.rename(columns=EAC_COLUMN_MAPPING, errors='ignore')
+    en_eac_df = en_eac_df.rename(columns=EAC_COLUMN_MAPPING, errors='ignore')
+    fr_eac_df = fr_eac_df.rename(columns=EAC_COLUMN_MAPPING, errors='ignore')
+
+    # Swahili
+    if 'language' in sw_eac_df.columns:
+     sw_eac_df['language'] = 'swahili'
+     sw_eac_df['timestamp'] = timestamp
+     sw_eac_df['annotator'] = 'kigalithm'
+    else:
+     print("Error: 'language' column not found in Swahili data after renaming.")
+
+
+    # Kinyarwanda
+    if 'language' in rw_eac_df.columns:
+     rw_eac_df['language'] = 'kinyarwanda'
+     rw_eac_df['timestamp'] = timestamp
+     rw_eac_df['annotator'] = 'kigalithm'
+    else:
+     print("Error: 'language' column not found in Kinyarwanda data after renaming.")
+
+
+    # English
+    if 'language' in en_eac_df.columns:
+     en_eac_df['language'] = 'english'
+     en_eac_df['timestamp'] = timestamp
+     en_eac_df['annotator'] = 'kigalithm'
+    else:
+     print("Error: 'language' column not found in English data after renaming.")
+
+
+    # French
+    if 'language' in fr_eac_df.columns:
+     fr_eac_df['language'] = 'french'
+     fr_eac_df['timestamp'] = timestamp
+     fr_eac_df['annotator'] = 'kigalithm'
+    else:
+     print("Error: 'language' column not found in French data after renaming.")
+
+
+    # Swahili
+    for col in TARGET_COLUMNS:
+        if col not in sw_eac_df.columns:
+            default_value = DEFAULT_METADATA_DEFAULTS.get(col, None)
+            sw_eac_df[col] = default_value
+
+
+    # Kinyarwanda
+    for col in TARGET_COLUMNS:
+        if col not in rw_eac_df.columns:
+            default_value = DEFAULT_METADATA_DEFAULTS.get(col, None)
+            rw_eac_df[col] = default_value
+
+
+    # English
+    for col in TARGET_COLUMNS:
+        if col not in en_eac_df.columns:
+            default_value = DEFAULT_METADATA_DEFAULTS.get(col, None)
+            en_eac_df[col] = default_value
+
+
+    # French
+    for col in TARGET_COLUMNS:
+        if col not in fr_eac_df.columns:
+            default_value = DEFAULT_METADATA_DEFAULTS.get(col, None)
+            fr_eac_df[col] = default_value
+
+
+
+    # sw_eac_df = sw_eac_df[TARGET_COLUMNS]
+
+    combined_training_df = pd.concat([training_df, sw_eac_df, rw_eac_df, en_eac_df, fr_eac_df], ignore_index=True)
+    
+    sw_df = combined_training_df[combined_training_df['language'] == 'swahili']
+    rw_df = combined_training_df[combined_training_df['language'] == 'kinyarwanda']
+    fr_df = combined_training_df[combined_training_df['language'] == 'french']
+    en_df = combined_training_df[combined_training_df['language'] == 'english']
+    
+    print(f"sw: {len(sw_df)} vs rw:{len(rw_df)} vs en: {len(en_df)} vs fr: {len(fr_df)}")
+    combined_training_df.to_csv("../data/raw/spoken_languages_in_rw.csv", index=False, encoding='utf-8')
+
