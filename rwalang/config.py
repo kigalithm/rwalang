@@ -407,3 +407,4 @@ COMMON_KINYA_PATTERNS = [
 # Data
 DEFAULT_OUTPUT_CSV_PATH = "../data/raw/training_data.csv"
 TRAINING_DATA_CSV_PATH = "../data/raw/spoken_languages_in_rw_05072025.csv"
+TRAINED_MODEL_PATH = "models/kinya_detector.joblib"
