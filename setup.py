@@ -7,7 +7,7 @@ setuptools.setup(
     name="rwalang",
     version="1.0.0",
     author="izamha",
-    author_email="foss@kigalithm.com",
+    author_email="giliza@kigalithm.com",
     description="An enhanced language detector for Kinyarwanda",
     long_description=long_desc,
     long_description_content_type="text/markdown",
@@ -23,9 +23,10 @@ setuptools.setup(
     ],
     python_requires=">=3.7",
     install_requires=[
-        "scikit-learn>=1.0"
-        "numpy>=1.20",
-        "joblib>=1.0",
+        "scikit-learn>=1.6.1",
+        "numpy>=2.2.5",
+        "joblib>=1.5.0",
+        "pandas>=2.2.3",
     ],
     include_package_data=True,
     package_data={

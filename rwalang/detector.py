@@ -3,6 +3,7 @@ import random
 import numpy as np
 import pandas as pd
 import joblib
+import importlib.resources
 import warnings
 from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,16 +11,16 @@ from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline, FeatureUnion
-from linguistic_features import KinyaLinguisticFeatures
-from config import (
+from rwalang.linguistic_features import KinyaLinguisticFeatures
+from rwalang.config import (
     logging,
     MIXED_TEXT_THRESHOLD,
     DEFAULT_NGRAM_RANGE,
     HELPER_LANGUAGES,
     DEFAULT_DETECT_THRESHOLD,
     DEFAULT_MAX_FEATURES,
-    TRAINING_DATA_CSV_PATH,
-    TRAINED_MODEL_PATH,
+    MODEL_RESOURCE_PATH,
+    TRAINING_DATA_CSV_PATH
 )
 
 
@@ -728,111 +729,19 @@ class KinyaLangDetector:
             logging.error(f"Error saving model to {filepath}: {e}")
 
 
-    def load_model(self, filepath = TRAINED_MODEL_PATH):
+    def load_model(self, filepath = MODEL_RESOURCE_PATH):
+        model_path = importlib.resources.files('rwalang').joinpath(filepath)
         """Load a trained model from a file"""
         try:
-            self.model = joblib.load(filepath)
-            logging.info(f"Model loaded from {filepath}")
+            self.model = joblib.load(model_path)
+            logging.info(f"Model successfully loaded!")
             return True
         except FileNotFoundError:
-            logging.error(f"Model file not found at {filepath}")
+            logging.error(f"Model file not found at {model_path}")
             self.model = None
             raise
         except Exception as e:
-            logging.error(f"Error loading model from {filepath}: {e}")
+            logging.error(f"Error loading model from {model_path}: {e}")
             self.model = None
             raise
 
-
-# Example usage in a main function
-# (Requires the refactored KinyarwandaLinguisticFeatures class definition above this)
-def main():
-    training_df = pd.read_csv(TRAINING_DATA_CSV_PATH)
-    training_data_dict = training_df.groupby('language')['text'].apply(list).to_dict()
-
-    # Create and train the enhanced detector
-    detector = KinyaLangDetector()
-
-    # Check if a trained model exists and load it, otherwise train
-    model_filepath = TRAINED_MODEL_PATH
-    try:
-        detector.load_model(model_filepath)
-    except FileNotFoundError:
-        logging.error(f"Model file not found at {model_filepath}. Training new model...")
-        detector.train(training_data_dict)
-        detector.save_model(model_filepath)
-
-    # chatbot simulation
-    def chatbot_response(user_input):
-        result = detector.detect(user_input)
-
-        response = f"Input: '{user_input}'\n"
-        response += f"Detection Result: {result}\n"
-
-        if result["is_kinyarwanda"]:
-            confidence_percent = int(result["confidence"] * 100)
-            response += (
-                f"Chatbot interpretation: I detected Kinyarwanda (confidence: {confidence_percent}%). "
-                f"I'm still learning Kinyarwanda, but I'll try my best to understand. "
-                f"Would you like to continue in English for now?"
-            )
-        elif result["code_mixed"]:
-            confidence_percent = int(result["confidence"] * 100)
-            response += (
-                f"Chatbot interpretation: I detected code-mixed text (confidence: {confidence_percent}%, predicted primary: {result['language']}). "
-                f"It seems to contain Kinyarwanda mixed with other languages. "
-                f"How can I help with this?"
-            )
-        else:
-            # Process the message normally in the detected language
-            if result["language"] == "english":
-                response += "Chatbot interpretation: I understood your message in English. How can I help you today?"
-            elif result["language"] == "french":
-                response += "Chatbot interpretation: J'ai compris votre message en français. Comment puis-je vous aider aujourd'hui?"
-            elif result["language"] == "swahili":
-                response += "Chatbot interpretation: Nimeelewa ujumbe wako kwa Kiswahili. Nawezaje kukusaidia leo?"
-            else:
-                response += f"Chatbot interpretation: I detected the language as '{result['language']}' (confidence: {int(result['confidence']*100)}%). How can I help?"
-
-        return response
-
-    # Test some examples
-    test_phrases = [
-        "Ese ubu yamaze gu testing?",  # Mixed Kinyarwanda + English
-        "uraho, witwa nde?",  # Kinyarwanda
-        "Bite byanyu?",  # Kinyarwanda greeting
-        "habari zenu?",  # Swahili greeting
-        "Hello, how are you?",  # English greeting
-        "Wambwira isaha?",  # Kinyarwanda
-        "Je parle français",  # French
-        "Ubu ndimo kwiga Ikinyarwanda",  # Kinyarwanda
-        "Can you help me with my homework?",  # English
-        "Iyakaremye niyo ikamena",  # Kinyarwanda proverb
-        "Ibyabapfu biribwa n'abapfumu",  # Kinyarwanda proverb
-        "Ndi online ubu.",  # Mixed Kinyarwanda + English
-        "Ura charging telephone?",  # Mixed Kinyarwanda + English
-        "Twahuye muri centre.",  # Mixed Kinyarwanda + French
-        "Ibyo ni sawa kabisa.",  # Mixed Kinyarwanda + Swahili
-        "Mfite message kuri whatsapp.",  # Mixed Kinyarwanda + English
-        "Murakoze cyane.",  # Kinyarwanda (Common phrase)
-        "Tuzahura ejo.",  # Kinyarwanda
-        "Where are you going?",  # English
-        "Quelle heure est-il?",  # French
-        "Unataka nini?",  # Swahili
-        "Amafaranga ntabwo ahagije.",  # Kinyarwanda
-        "Ndashaka gu checkinga email zanjye.",  # Mixed Kinyarwanda + English
-        "Mwiriwe neza.",  # Kinyarwanda greeting
-        "Nta kibazo.",  # Kinyarwanda
-        "Okay, see you later.",  # Mixed English
-        "Bon appétit!",  # French
-        "Hakuna matata.",  # Swahili
-        "Ese ubu uri gukora project?",  # Mixed Kinyarwanda + English
-    ]
-
-    for phrase in test_phrases:
-        logging.info("-" * 30)
-        logging.info(chatbot_response(phrase))
-
-
-if __name__ == "__main__":
-    main()

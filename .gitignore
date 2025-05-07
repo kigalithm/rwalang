@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-data/
 
 # C extensions
 *.so
@@ -13,6 +12,7 @@ data/
 *.pem
 id_*
 rag_data/
+data/
 
 # Distribution / packaging
 .Python
@@ -140,6 +140,7 @@ celerybeat.pid
 .venv
 env/
 venv/
+test_venv/
 ENV/
 env.bak/
 venv.bak/
