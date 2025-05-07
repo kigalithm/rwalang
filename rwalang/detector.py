@@ -18,6 +18,7 @@ from config import (
     HELPER_LANGUAGES,
     DEFAULT_DETECT_THRESHOLD,
     DEFAULT_MAX_FEATURES,
+    TRAINING_DATA_CSV_PATH,
 )
 
 
@@ -725,349 +726,44 @@ class EnhancedKinyaLangDetector:
         except Exception as e:
             logging.error(f"Error saving model to {filepath}: {e}")
 
+
     def load_model(self, filepath):
         """Load a trained model from a file"""
         try:
             self.model = joblib.load(filepath)
             logging.info(f"Model loaded from {filepath}")
-            # After loading, re-instantiate the linguistic features?
-            # No, the pipeline saves the instance. Ensure the class definition
-            # is available when loading.
-            # However, if the class definition changes, loaded models might break.
+            return True
         except FileNotFoundError:
             logging.error(f"Model file not found at {filepath}")
             self.model = None
+            raise
         except Exception as e:
             logging.error(f"Error loading model from {filepath}: {e}")
             self.model = None
+            raise
 
 
 # Example usage in a main function
 # (Requires the refactored KinyarwandaLinguisticFeatures class definition above this)
 def main():
-    # Sample training data (simplified for demonstration)
-    # (Keep your existing comprehensive sample data)
-    training_data = {
-        "kinyarwanda": [
-            "ubu umbona ndi kuri move",
-            "ntabwo wambona ntakora testing",
-            "Muraho, amakuru yanyu?",
-            "Ndagukunda cyane.",
-            "Mwaramutse neza?",
-            "Mwiriwe amahoro?",
-            "Umunsi mwiza.",
-            "Umunyarwanda yumva ururimi rwe neza.",
-            "Igihugu cyacu ni kiza.",
-            "Tuzakomeza gutera imbere.",
-            "Amafaranga menshi azaza.",
-            "Ibyo uvuze nibyo.",
-            "Ndabyumva neza cyane.",
-            "Ntabwo numva icyo uvuze.",
-            "Ibiryo biryoshye cyane.",
-            "Nzaza ejo mu gitondo.",
-            "Ubuzima bwiza ni ingenzi.",
-            "Abana biga neza.",
-            "Imana ibane nawe.",
-            "Twese turi kumwe.",
-            "Ndaseka cyane.",
-            "Turaza guhura ryari?",
-            # More complex sentences and phrases
-            "Amazi ni ingenzi ku buzima bwacu bwose.",
-            "Umukino utangira saa tatu z'amanywa.",
-            "Umuryango wanjye ni mwiza cyane kandi tubanye neza.",
-            "Ikiganiro cyacu kiragenda neza uyu munsi.",
-            "Ndagukumbura cyane kuva aho ugendeye",
-            "Ndakwishimira cyane kubera ibyo wakoze byose.",
-            "Amashuri yigisha neza abana bacu.",
-            "Umurima wacu urera neza.",
-            "Nzava mu modoka vuba cyane.",
-            "Ndasoma igitabo cyiza cyanditswe n'umwanditsi w'umunyarwanda.",
-            "Bukeye abona agasozi kari gateganye n’urugo rw’Umwami",
-            "kakabuza abantu kureba ibituruka kure",
-            "Semuhanuka araza abwira Umwami ati.",
-            "urampe inka y’ingumba maze nzagukurireho kariya gasozi",
-            "nyoroshya mpa ibyo umpa maze uzirorere",
-            "Semuhanuka aza yakenyeye bya gasurantambara",
-            "yitwaje ikibando, yikoreye ingata nini ifashe ku mutwe wose",
-            "araza n’i bwami ahasanga abantu benshi",
-            "mbwirira aba bantu bamperekeze hariya hari icyo njya kubabwira",
-            "Semuhanuka amaguru aba ariyo abangira ingata asubira ibwami",
-            "Ababiri bagiye inama baruta umunani barasana",
-            "Ababiri bakika umwe",
-            "Ababiri bateranya abeza",
-            "Ababiri bica umwe",
-            "Ababiri ntibacibwa inka",
-            "Abacuranye ubusa basangira ubundi",
-            "Abadapfuye ntibabura kubonana",
-            "Abagabo babiri ntibabana mu nzu imwe.",
-            "Abagabo bararya imbwa zikishyura (zikaryora).",
-            "Abagira amenyo baraseka.",
-            "Abagira inyonjo bagira ibirori.",
-            "Abagira iyo bajya baragenda.",
-            "Ab’imbwa bifuza ko budacya.",
-            "Aboro babiri ntibasangira umwerera.",
-            "Abonye isha itamba ata n’urwo yari yambaye.",
-            "Abotanye kera ntibahishanya amabya.",
-            "Abo umwami yahaye amata ni bo bamwimye amatwi.",
-            "Abwirwa benshi akumva bene yo.",
-            "Acuritse inkanda ntacuritse umutima.",
-            "Agaca amakungu ni ukwima uwarugendagamo.",
-            "Agacumu gahabwa agahari, naho agahararutswe gahabwa agahini.",
-            "Agahanga k’umugabo gahangurwa n’uwakaremye.",
-            "Agahararo ntikabuza agahararuko.",
-            "Agahinda gashira bake.",
-            "Agahinda k’inkoko kamenya inkike yatoyemo.",
-            "Agahinda k’inkono kamenywa n’uwayiharuye.",
-            "Agahinda ntigashira; gashira nyirako yapfuye.",
-            "Agahinda ntikajya ahabona.",
-            "Agahinda ntikica kagira mubi.",
-            "Agahinda ni ukubura uwo ukunda.",
-            "Babajije inyamanza bati: ko ufite ukuguru gutoya?",
-            "Iti: na ko nagukesheje Rusengo, Semugeshi arenda kukubazamo ubwato!",
-            "Babonye umwezi bagira ngo bwakeye",
-            "Bagabobarabona yahamagaye urupfu ngo nirugaruke rumurarire",
-            "Bagabobarabona yambutse uruzi uruhu rwe rugwamo, ati: ruramaze rwari rurariwe kumeswa",
-            "Bagarira yose ntuzi irizera n'irizarumba",
-            "Bagaragaza ba Bagaragaza ati; aho abato bari bararyimara",
-            "Bakubise nyir'uruhara, nyir'imvi ati: bene ubusembwa batashye",
-            "Bakunda inkwi bakanga umushenyi",
-            "Bamenya icyo yishe ntibamenya icyo ikijije",
-            "Banegura ibyigondoye umuhoro ukarakara",
-            "Biza byirabura, bikaza byera, bigaturwa umwami",
-            "Bucya zihindura imirishyo",
-            "Bucyana ayandi",
-            "Gahebeheba ka Ntibaheba, ati: Urwanda rwanyanze ngahata!",
-            "Gahima yanywanye na Kajogora, ati: intege nke zitera imico myiza",
-            "Gesa ubw'iyo ubw'ino ntiburera",
-            "Gihuga isubiye ku gihuru",
-            "Gikona burya uzi ko njya ngukeka amababa!",
-            "Gira so yiturwa indi.",
-            "Guha inda ni ukuyirariza",
-            "Guha intanyurwa ni ugusesa",
-            "Guherekeza si ukujyana",
-            "Gukanura amaso si ko gukira",
-            "Gukira kwibagiza gukinga",
-            "Gukunda ikitagukunda ni imvura igwa mu ishyamba",
-            "Haba ubugabo ntihaba ubukuru.",
-            "Haba umugisha ntihaba ubugabo.",
-            "Haba umuhanwa hakaba n’umwihane, hakaba n’uwananiranye",
-            "Haganya nyir’ubukozwemo naho nyir’ubuteruranwe n’akebo, ntakoma",
-            "Hagati y'abapfu n’abapfumu hamenya abahanga",
-            "Hagati yumutwe n’umutwaro haca ingata",
-            "Haguma kwiha",
-            "Haguma umwami ingoma irabazwa",
-            "Hakomera imfubyi ifuni iroroha",
-            "Agakungu kavamo imbwa yiruka.",
-            "Agapfa kabuliwe ni impongo.",
-            "Agapfundikiye gatera amatsiko.",
-            "Agatinze kazaza ni amenyo ya ruguru.",
-            "Ababurana Ari babiri umwe abayigiza nkana",
-            "utazi ubwenge ashima ubwe ",
-            "ikibuno gishuka amabyi bitari bujyane",
-            "Ababiri bishe imbwa y’umwami.",
-            "Ababiri ntibacibwa inka.",
-            "Ababurana ari babiri umwe aba yigiza nkana.",
-            "Abagore bagira inzara ntibagira inzigo.",
-            "Abagore baragwira.",
-            "Abahigi benshi bayobya imbwa (uburari).",
-            "Abakingiranye inyegamo ntibakingirana ingabo.",
-            "Abalinzi bajya inama inyoni zijya iyindi.",
-            "Abantu bibuka imana iyo amakuba yababanye menshi.",
-            "Abasangira bashonje ntawusigariza undi.",
-            "Abasangira basigana imbyiro.",
-            "Abasangira bike bitana ibisambo.",
-            "Abasangira ubusa bitana ibisambo.",
-            "Abasobetse imisumbi ntibaba bagihishanye amabya.",
-            "Abatanye badatata barasubirana.",
-            "Abateranye imigeri ntibahishana amabya.",
-            "Aberekeranye ntibabura kwendana.",
-            "Abotanye kera ntibahishanya amabya",
-            "Abwirwa benshi akumva (akwumvwa na) bene yo.",
-            "Agafuni kabagara ubucuti ni akarenge.",
-            "Agahwa kari k’uwundi karahandurika.",
-            "Agakecuru gahaze gakina n’imyenge y’inzu.",
-            "Agakono gashaje karyoshya ibiryo",
-            "Agakono gashaje niko karyoshya imboga",
-            "Agakungu gakuna imbwa.",
-            "Agakungu iyo gashize agashino kayora ivu.",
-            "Agakungu kavamo imbwa yiruka.",
-            "Agapfa kabuliwe ni impongo.",
-            "Agashyize kera gahinyuza inshuti.",
-            "Agashyize kera gahinyuza intwari.",
-            "Agasozi kagusabye amaraso ntuyakarenza.",
-            "Agasozi kamanutse inka kazamuka indi.",
-            "Agati gateretswe n’Imana ntigahungabanywa n’umuyaga.",
-            "Agatinze kazaryoha ni agatuba k’uruhinja.",
-            "Agatinze kazaza ni amenyo ya ruguru.",
-            "Ahanze ubwana hamera ubwanwa.",
-            # Additional phrases covering various contexts
-            "Abandi barimo gukora iki muri iki gihe?",
-            "Nkora mu ruganda runini rw'iKigali.",
-            "Ndabyumva ariko ntabwo nshobora kubisobanura neza.",
-            "Ntabwo nabashije kubona imodoka yanjye.",
-            "Urukundo rwawe ni rwinshi cyane.",
-            "Abana bacu biga mu ishuri ryiza.",
-            "Umwarimu afasha abanyeshuri benshi.",
-            "Ndashaka kumenya uko wageze aha.",
-            "Igihe kirageze ngo tugende.",
-            "Dukeneye gutegura ibiryo byinshi.",
-            # Including some words the model missed
-            "Abandi baraho se badi?",
-            "Ndashaka kumenya igihe",
-            "Ubu ndimo kwiga Ikinyarwanda",
-            "Abanyarwanda benshi bavuga Ikinyarwanda neza",
-            "Ndaza kugaruka vuba",
-            "Amaherezo twabonye umuti w'ikibazo",
-            "Yego ndabyemera rwose",
-            "Ntabwo numva icyo uri kuvuga",
-            "Mu by'ukuri nshoshoboye gukora ibi",
-            "Ese uzaza i Kigali ryari?",
-            "Mu Rwanda hari imisozi igihumbi",
-            # Adding the examples that caused false negatives in our test
-            "Abandi baraho se badi?",
-            # Add variations of the problematic phrase
-            "Nyabuna se abandi baraho?",
-            "Baraho se badi?",
-            "Baraho badi?",
-            "Baraho se?",
-            "Muraho badi?",
-            "Abandi baraho?",
-            "Baraho nyabuna?",
-            # Add some mixed examples to the training data (optional, synthetic)
-            "Ngiye gufata aka bike",  # Kinyarwanda + English
-            "Ndi online ubu.",  # Kinyarwanda + English
-            "Ndashaka ku download application.",  # Kinyarwanda + English
-            "Ubu ndimo gukora project.",  # Kinyarwanda + English
-            "Twari muri meeting.",  # Kinyarwanda + English
-            "Amafaranga ya bank.",  # Kinyarwanda + English
-            "Ura charging telephone?",  # Kinyarwanda + English
-            "Turi kuri facebook.",  # Kinyarwanda + English
-            "Ndamubona kuri whatsapp.",  # Kinyarwanda + English
-            "Ese ufite message yanjye?",  # Kinyarwanda + English
-            "Niba uri okay, tuza.",  # Kinyarwanda + English
-            "Nshaka kujya kuri internet.",  # Kinyarwanda + English
-            "Bon courage muri school.",  # Kinyarwanda + French/English
-            "Urakoze sana mwana.",  # Kinyarwanda + Swahili/Kinyarwanda (sana is Swahili)
-            "Ntabwo nabonye document.",  # Kinyarwanda + French
-            "Bureau yanjye iri muri Kigali.",  # Kinyarwanda + French
-            "Twahuye muri centre.",  # Kinyarwanda + French
-            "Ibyo ni sawa kabisa.",  # Kinyarwanda + Swahili
-            "Habari ko muri mu Rwanda?",  # Swahili + Kinyarwanda
-            "Asante cyane.",  # Swahili + Kinyarwanda
-            "Urabona arahagera nka saa ngapi?",
-        ],
-        "english": [
-            "Hello, how are you?",
-            "The quick brown fox jumps over the lazy dog.",
-            "Where are you going?",
-            "This is an English sentence.",
-            "I can't speak Kinyarwanda.",
-            "What time is the meeting?",
-            "Thank you for your help.",
-            "Can you please repeat that?",
-            "Have a nice day!",
-            "Let's meet tomorrow morning.",
-            "The weather is nice today.",
-            "I am learning a new language.",
-            "She works at the university.",
-            "Can you help me with this?",
-            "Tomorrow we will go to the beach.",
-            "Please call me later.",
-            "What is your favorite food?",
-            "The meeting starts at three o'clock.",
-            "My family is very important to me.",
-            "Our conversation is going well.",
-            "I miss you very much.",
-            "The school teaches well.",
-            "I'll get out of the car.",
-            "How was your weekend?",
-            "I enjoyed our time together.",
-            "Can we schedule another meeting?",
-            "The project is almost complete.",
-            "I need more information about this topic.",
-            "Please send me the documents by email.",
-            "The restaurant is on the corner of the street.",
-        ],
-        "french": [
-            "Je ne comprends pas ce que tu dis.",
-            "Bonjour tout le monde.",
-            "Comment allez-vous aujourd'hui?",
-            "Je suis très content de vous voir.",
-            "Merci beaucoup pour votre aide.",
-            "Je voudrais un café, s'il vous plaît.",
-            "Quel temps fait-il aujourd'hui?",
-            "Je parle français un peu.",
-            "La plume de ma tante est sur le bureau de mon oncle.",
-            "Nous allons au cinéma ce soir.",
-            "Je travaille à l'université.",
-            "C'est une très belle journée.",
-            "Je ne sais pas comment expliquer ça.",
-            "Avez-vous compris ce que j'ai dit?",
-            "Nous devons partir maintenant.",
-        ],
-        "swahili": [
-            "Habari yako?",
-            "Jina langu ni Claude.",
-            "Ninasema Kiswahili kidogo.",
-            "Asante sana kwa msaada wako.",
-            "Tutaonana kesho.",
-            "Chakula hiki ni kitamu sana.",
-            "Naenda sokoni kununua matunda.",
-            "Leo ni siku nzuri.",
-            "Unaenda wapi sasa?",
-            "Nimefurahi kukutana nawe.",
-            "Unafanya kazi gani?",
-            "Naishi Nairobi.",
-            "Ninapenda kusoma vitabu.",
-            "Hali ya hewa ni nzuri leo.",
-            "Tutaonana baadaye.",
-        ],
-        "other": [
-            "Hola, ¿cómo estás hoy?",  # Spanish
-            "Ich bin ein Student.",  # German
-            "Ich bin müde und gehe schlafen.",  # German
-            "No entiendo lo que estás diciendo.",  # Spanish
-            "Mi chiamo Claude e vengo dall'Italia.",  # Italian
-            "Dov'è la stazione ferroviaria?",  # Italian
-            "Jeg snakker ikke norsk.",  # Norwegian
-            "Talar du svenska?",  # Swedish
-            "¿Dónde está la biblioteca?",  # Spanish
-            "Wie spät ist es?",  # German
-            "Ik spreek een beetje Nederlands.",  # Dutch
-            "Jeg er meget glad i dag.",  # Danish
-            "Olá, como vai você?",  # Portuguese
-            "Não falo português muito bem.",  # Portuguese
-            "Det er en vakker dag i dag.",  # Norwegian
-        ],
-    }
-
-    kinya_data = training_data["kinyarwanda"]
-
-    from utils import save_training_data_to_csv
-
-    df = save_training_data_to_csv(training_data)
-
-    if df is not None:
-        print("\nFirst 5 rows of the created DataFrame:")
-        print(df.head())
-
-        print(f"\nValue counts for labels:")
-        print(df.head(5))
+    training_df = pd.read_csv(TRAINING_DATA_CSV_PATH)
+    training_data_dict = training_df.groupby('language')['text'].apply(list).to_dict()
 
     # Create and train the enhanced detector
-    # detector = EnhancedKinyaLangDetector()
-    # detector.train(training_data)
+    detector = EnhancedKinyaLangDetector()
+    # detector.train(training_data_dict)
 
     # Check if a trained model exists and load it, otherwise train
-    # model_filepath = "kinya_detector.joblib"
-    # try:
-    #     detector.load_model(model_filepath)
-    # except FileNotFoundError:
-    #     logging.error(f"Model file not found at {model_filepath}. Training new model...")
-    #     detector.train(training_data)
-    #     detector.save_model(model_filepath)
+    model_filepath = "models/kinya_detector.joblib"
+    try:
+        detector.load_model(model_filepath)
+    except FileNotFoundError:
+        logging.error(f"Model file not found at {model_filepath}. Training new model...")
+        detector.train(training_data_dict)
+        detector.save_model(model_filepath)
+        exit()
 
-    # Example usage in a chatbot
+    # chatbot simulation
     # def chatbot_response(user_input):
     #     result = detector.detect(user_input)
 
@@ -1101,38 +797,38 @@ def main():
 
     #     return response
 
-    # Test some examples
-    test_phrases = [
-        "Ese ubu yamaze gu testing?",  # Mixed Kinyarwanda + English
-        "uraho, witwa nde?",  # Kinyarwanda
-        "Bite byanyu?",  # Kinyarwanda greeting
-        "habari zenu?",  # Swahili greeting
-        "Hello, how are you?",  # English greeting
-        "Wambwira isaha?",  # Kinyarwanda
-        "Je parle français",  # French
-        "Ubu ndimo kwiga Ikinyarwanda",  # Kinyarwanda
-        "Can you help me with my homework?",  # English
-        "Iyakaremye niyo ikamena",  # Kinyarwanda proverb
-        "Ibyabapfu biribwa n'abapfumu",  # Kinyarwanda proverb
-        "Ndi online ubu.",  # Mixed Kinyarwanda + English
-        "Ura charging telephone?",  # Mixed Kinyarwanda + English
-        "Twahuye muri centre.",  # Mixed Kinyarwanda + French
-        "Ibyo ni sawa kabisa.",  # Mixed Kinyarwanda + Swahili
-        "Mfite message kuri whatsapp.",  # Mixed Kinyarwanda + English
-        "Murakoze cyane.",  # Kinyarwanda (Common phrase)
-        "Tuzahura ejo.",  # Kinyarwanda
-        "Where are you going?",  # English
-        "Quelle heure est-il?",  # French
-        "Unataka nini?",  # Swahili
-        "Amafaranga ntabwo ahagije.",  # Kinyarwanda
-        "Ndashaka gu checkinga email zanjye.",  # Mixed Kinyarwanda + English
-        "Mwiriwe neza.",  # Kinyarwanda greeting
-        "Nta kibazo.",  # Kinyarwanda
-        "Okay, see you later.",  # Mixed English
-        "Bon appétit!",  # French
-        "Hakuna matata.",  # Swahili
-        "Ese ubu uri gukora project?",  # Mixed Kinyarwanda + English
-    ]
+    # # Test some examples
+    # test_phrases = [
+    #     "Ese ubu yamaze gu testing?",  # Mixed Kinyarwanda + English
+    #     "uraho, witwa nde?",  # Kinyarwanda
+    #     "Bite byanyu?",  # Kinyarwanda greeting
+    #     "habari zenu?",  # Swahili greeting
+    #     "Hello, how are you?",  # English greeting
+    #     "Wambwira isaha?",  # Kinyarwanda
+    #     "Je parle français",  # French
+    #     "Ubu ndimo kwiga Ikinyarwanda",  # Kinyarwanda
+    #     "Can you help me with my homework?",  # English
+    #     "Iyakaremye niyo ikamena",  # Kinyarwanda proverb
+    #     "Ibyabapfu biribwa n'abapfumu",  # Kinyarwanda proverb
+    #     "Ndi online ubu.",  # Mixed Kinyarwanda + English
+    #     "Ura charging telephone?",  # Mixed Kinyarwanda + English
+    #     "Twahuye muri centre.",  # Mixed Kinyarwanda + French
+    #     "Ibyo ni sawa kabisa.",  # Mixed Kinyarwanda + Swahili
+    #     "Mfite message kuri whatsapp.",  # Mixed Kinyarwanda + English
+    #     "Murakoze cyane.",  # Kinyarwanda (Common phrase)
+    #     "Tuzahura ejo.",  # Kinyarwanda
+    #     "Where are you going?",  # English
+    #     "Quelle heure est-il?",  # French
+    #     "Unataka nini?",  # Swahili
+    #     "Amafaranga ntabwo ahagije.",  # Kinyarwanda
+    #     "Ndashaka gu checkinga email zanjye.",  # Mixed Kinyarwanda + English
+    #     "Mwiriwe neza.",  # Kinyarwanda greeting
+    #     "Nta kibazo.",  # Kinyarwanda
+    #     "Okay, see you later.",  # Mixed English
+    #     "Bon appétit!",  # French
+    #     "Hakuna matata.",  # Swahili
+    #     "Ese ubu uri gukora project?",  # Mixed Kinyarwanda + English
+    # ]
 
     # for phrase in test_phrases:
     #     logging.info("-" * 30)
