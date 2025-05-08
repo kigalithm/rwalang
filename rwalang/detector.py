@@ -746,24 +746,24 @@ class KinyaLangDetector:
             raise
 
 
-def main():
-    training_df = pd.read_csv(TRAINING_DATA_CSV_PATH)
-    training_data_dict = training_df.groupby('language')['text'].apply(list).to_dict()
+# def main():
+#     training_df = pd.read_csv(TRAINING_DATA_CSV_PATH)
+#     training_data_dict = training_df.groupby('language')['text'].apply(list).to_dict()
 
-    # Create and train the enhanced detector
-    detector = KinyaLangDetector()
+#     # Create and train the enhanced detector
+#     detector = KinyaLangDetector()
 
-    # Check if a trained model exists and load it, otherwise train
-    model_filepath = MODEL_RESOURCE_PATH
-    try:
-        detector.load_model(model_filepath)
-    except FileNotFoundError:
-        logging.error(f"Model file not found at {model_filepath}. Training new model...")
-        detector.train(training_data_dict)
-        detector.save_model(model_filepath)
+#     # Check if a trained model exists and load it, otherwise train
+#     model_filepath = MODEL_RESOURCE_PATH
+#     try:
+#         detector.load_model(model_filepath)
+#     except FileNotFoundError:
+#         logging.error(f"Model file not found at {model_filepath}. Training new model...")
+#         detector.train(training_data_dict)
+#         detector.save_model(model_filepath)
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
 
 

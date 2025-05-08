@@ -30,6 +30,6 @@ setuptools.setup(
     ],
     include_package_data=True,
     package_data={
-        'kgt_rwalang': ['models/*.joblib']
+        'rwalang': ['models/*.joblib']
     },
 )
