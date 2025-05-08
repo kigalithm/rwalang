@@ -19,7 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Text Processing :: Linguistic",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
-        "Development Status :: 3 - Beta",
+        "Development Status :: 3 - Alpha",
     ],
     python_requires=">=3.7",
     install_requires=[
