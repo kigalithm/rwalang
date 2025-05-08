@@ -1,4 +1,4 @@
-# kgt_rwalang
+# kgt-rwalang
 
 An enhanced language detector for Kinyarwanda, designed to accurately identify Kinyarwanda text, including code-mixed content involving English, French, and Swahili.
 
@@ -6,7 +6,7 @@ An enhanced language detector for Kinyarwanda, designed to accurately identify K
 
 ## Overview
 
-kgt_rwalang combines traditional methods like character n-grams and TF-IDF with Kinyarwanda-specific linguistic features to achieve robust language detection. It includes specialized handling and confidence scoring for text that mixes Kinyarwanda with common foreign loan words and grammatical structures.
+kgt-rwalang combines traditional methods like character n-grams and TF-IDF with Kinyarwanda-specific linguistic features to achieve robust language detection. It includes specialized handling and confidence scoring for text that mixes Kinyarwanda with common foreign loan words and grammatical structures.
 
 ## Features
 
@@ -22,7 +22,7 @@ kgt_rwalang combines traditional methods like character n-grams and TF-IDF with 
 You can install the package using pip:
 
 ```bash
-pip install kgt_rwalang
+pip install kgt-rwalang
 ```
 
 ## Usage
@@ -31,7 +31,7 @@ Here's a basic example of how to use the `KinyaLangDetector` class:
 
 ```python
 import pandas as pd
-from kgt_rwalang.detector import KinyaLangDetector
+from rwalang.detector import KinyaLangDetector
 
 # Instantiate the Detector
 detector = KinyaLangDetector()
@@ -76,7 +76,8 @@ if detector.model: # Check if a model is successfully loaded or trained
         "Habari zenu?",                # Pure Swahili
         "Mfite message kuri whatsapp.", # Code-mixed Kinyarwanda/English
         "Ibyo ni sawa kabisa.",        # Code-mixed Kinyarwanda/Swahili
-        "Ni mwicare se banyabusa!" # Pure Kinyarwanda
+        "Ni mwicare se banyabusa!",    # Pure Kinyarwanda
+        "Erega ntabwo mbyigoragoraho rwose, Ninjye wishe umuzungu!"     # Pure Kinyarwanda
     ]
 
     for text in test_texts:

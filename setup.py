@@ -5,8 +5,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="kgt_rwalang",
-    version="1.0.0",
-    author="kigalithm",
+    version="1.0.1",
+    author="Kigalithm Ltd.",
     author_email="foss@kigalithm.com",
     description="An enhanced language detector for Kinyarwanda",
     long_description=long_desc,
@@ -19,7 +19,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Text Processing :: Linguistic",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
-        "Development Status :: 3 - Alpha", # Or 4 - Beta, 5 - Production/Stable
+        "Development Status :: 3 - Beta",
     ],
     python_requires=">=3.7",
     install_requires=[
