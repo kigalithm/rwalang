@@ -1,4 +1,4 @@
-# rwalang
+# kgt_rwalang
 
 An enhanced language detector for Kinyarwanda, designed to accurately identify Kinyarwanda text, including code-mixed content involving English, French, and Swahili.
 
@@ -6,7 +6,7 @@ An enhanced language detector for Kinyarwanda, designed to accurately identify K
 
 ## Overview
 
-rwalang combines traditional methods like character n-grams and TF-IDF with Kinyarwanda-specific linguistic features to achieve robust language detection. It includes specialized handling and confidence scoring for text that mixes Kinyarwanda with common foreign loan words and grammatical structures.
+kgt_rwalang combines traditional methods like character n-grams and TF-IDF with Kinyarwanda-specific linguistic features to achieve robust language detection. It includes specialized handling and confidence scoring for text that mixes Kinyarwanda with common foreign loan words and grammatical structures.
 
 ## Features
 
@@ -22,7 +22,7 @@ rwalang combines traditional methods like character n-grams and TF-IDF with Kiny
 You can install the package using pip:
 
 ```bash
-pip install rwalang
+pip install kgt_rwalang
 ```
 
 ## Usage
@@ -31,7 +31,7 @@ Here's a basic example of how to use the `KinyaLangDetector` class:
 
 ```python
 import pandas as pd
-from rwalang.detector import KinyaLangDetector
+from kgt_rwalang.detector import KinyaLangDetector
 
 # Instantiate the Detector
 detector = KinyaLangDetector()
@@ -117,7 +117,7 @@ This project is licensed under the [MIT License](https://opensource.org/license/
 
 ## Contributing
 
-We welcome contributions to rwalang! If you have suggestions for improvements, bug fixes, or want to add more linguistic features or data, please follow these steps:
+We welcome contributions to kgt_rwalang! If you have suggestions for improvements, bug fixes, or want to add more linguistic features or data, please follow these steps:
 
 1. Fork the repository on GitHub
 2. Create a new branch for your feature or bugfix.

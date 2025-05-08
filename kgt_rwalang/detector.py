@@ -11,8 +11,8 @@ from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline, FeatureUnion
-from rwalang.linguistic_features import KinyaLinguisticFeatures
-from rwalang.config import (
+from kgt_rwalang.linguistic_features import KinyaLinguisticFeatures
+from kgt_rwalang.config import (
     logging,
     MIXED_TEXT_THRESHOLD,
     DEFAULT_NGRAM_RANGE,

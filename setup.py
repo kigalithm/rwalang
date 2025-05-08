@@ -4,10 +4,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_desc = fh.read()
 
 setuptools.setup(
-    name="rwalang",
+    name="kgt_rwalang",
     version="1.0.0",
-    author="izamha",
-    author_email="giliza@kigalithm.com",
+    author="kigalithm",
+    author_email="foss@kigalithm.com",
     description="An enhanced language detector for Kinyarwanda",
     long_description=long_desc,
     long_description_content_type="text/markdown",
@@ -30,6 +30,6 @@ setuptools.setup(
     ],
     include_package_data=True,
     package_data={
-        'rwalang': ['models/*.joblib']
+        'kgt_rwalang': ['models/*.joblib']
     },
 )

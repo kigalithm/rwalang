@@ -1,7 +1,7 @@
 import re
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from rwalang.config import (
+from kgt_rwalang.config import (
     EN_LOAN_WORDS,
     FR_LOAN_WORDS,
     SW_LOAN_WORDS,
