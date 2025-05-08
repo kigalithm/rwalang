@@ -1,5 +1,5 @@
 import pytest
-from kgt_rwalang import detector
+from rwalang import detector
 
 
 # Get the directory of the current test file
