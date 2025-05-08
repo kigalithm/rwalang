@@ -1,4 +1,3 @@
-import os
 import pytest
 from rwalang import detector
 
@@ -20,7 +19,7 @@ def test_detector_instantiation(detector_instance):
 # Test loading the model using importlib.resources
 # This test assumes the model file is correctly included as package data
 # and the MODEL_RESOURCE_PATH is correctly defined in rwalang/config.py
-def test_load_model_success():
+def test_load_model_success(detector_instance):
       """Test that load_model successfully loads the model."""
       # Assuming MODEL_RESOURCE_PATH is defined in rwalang/config
       # Call load_model() with the default model
